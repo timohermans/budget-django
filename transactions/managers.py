@@ -7,11 +7,12 @@ from django.core.files.uploadedfile import UploadedFile
 from django.db import models
 from django.db.models import Model
 
+from user.type import User
+
 from typing import Type, TypeVar
 
 
 T = TypeVar('T', bound=Model)
-User = get_user_model()
 
 class TransactionManager[T](models.Manager):
     def process_file(self, file: UploadedFile, user: User) -> int:
