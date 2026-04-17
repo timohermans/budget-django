@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('transactions/', include('transactions.urls')),
     path('admin/', admin.site.urls),
     path('oidc/', include('mozilla_django_oidc.urls')),
 ]

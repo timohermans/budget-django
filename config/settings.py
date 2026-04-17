@@ -37,6 +37,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+PROJECT_APPS = [
+    'transactions.apps.TransactionsConfig'
+]
+
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +54,7 @@ THIRD_PARTY_APPS = [
     'mozilla_django_oidc',
 ]
 INSTALLED_APPS = [
+    *PROJECT_APPS,
     *DJANGO_APPS,
     *THIRD_PARTY_APPS,
 ]
@@ -61,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "django.contrib.auth.middleware.LoginRequiredMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'mozilla_django_oidc.middleware.SessionRefresh',

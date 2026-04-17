@@ -3,4 +3,7 @@
   <component name="Black">
     <option name="sdkName" value="Poetry (budget-django)" />
   </component>
+  <component name="RuffConfiguration">
+    <option name="enabled" value="true" />
+  </component>
 </project>
