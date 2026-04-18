@@ -20,6 +20,6 @@ class TransactionUploadView(View):
 
         try:
             count = Transaction.objects.process_file(file, user)
-            return render(request, 'success.html', {'count': count})
+            return render(request, 'transactions/success.html', {'count': count})
         except Exception as e:
             return render(request, 'errror.html', {'message': e})
