@@ -10,9 +10,12 @@ from django.db import models
 Model = TypeVar("Model", bound=models.Model)
 
 
+
 class TransactionManager(models.Manager[Model]):
-    def process_file(self, file: UploadedFile, user: AbstractBaseUser) -> int:
-        csv_file = TextIOWrapper(file, "utf-8")
+    def process_file(self, uploaded_file: UploadedFile, user: AbstractBaseUser) -> int:
+        if uploaded_file.file is None:
+            raise ValueError("Uploaded file is not available")
+        csv_file = TextIOWrapper(uploaded_file.file, "utf-8")
         reader = csv.DictReader(csv_file)
         transactions = []
         for row in reader:
