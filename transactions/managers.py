@@ -10,8 +10,7 @@ from django.db import models
 Model = TypeVar("Model", bound=models.Model)
 
 
-
-class TransactionManager(models.Manager[Model]):
+class TransactionManager(models.Manager):
     def process_file(self, uploaded_file: UploadedFile, user: AbstractBaseUser) -> int:
         if uploaded_file.file is None:
             raise ValueError("Uploaded file is not available")

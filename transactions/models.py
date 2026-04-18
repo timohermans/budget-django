@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class Transaction(models.Model):
-    objects: TransactionManager[Self] = TransactionManager() # type: ignore
+    objects = TransactionManager()
 
     follow_number = models.IntegerField(null=False, blank=False)
     iban = models.CharField(null=False, blank=False)
