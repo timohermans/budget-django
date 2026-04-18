@@ -1,3 +1,5 @@
+from typing import Self
+
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -5,8 +7,9 @@ from .managers import TransactionManager
 
 User = get_user_model()
 
+
 class Transaction(models.Model):
-    objects = TransactionManager()
+    objects: TransactionManager[Self] = TransactionManager() # type: ignore
 
     follow_number = models.IntegerField(null=False, blank=False)
     iban = models.CharField(null=False, blank=False)
