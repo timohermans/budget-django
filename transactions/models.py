@@ -1,7 +1,5 @@
-from typing import Self
-
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, transaction
 
 from .managers import TransactionManager
 
@@ -29,5 +27,24 @@ class Transaction(models.Model):
                 fields=['iban', 'follow_number', 'user'], name="unique_transaction"
             )
         ]
+
+    def is_fixed(self) -> bool: # TODO: unit test
+        if self.is_not_fixed: return False
+        if 'paypal' in self.name_other_party.lower(): return False
+        if self.code in ('sb', 'cb', 'bg', 'ei', 'tb'): return True
+        if self.code == 'db' and 'sparen' in self.description.lower(): return True
+        if self.code == 'db' and 'Rabobank' == self.name_other_party: return True
+        return False
+
+    def is_variable(self):
+        return not self.is_fixed()
+
+    def is_expense(self):
+        return self.amount < 0
+
+    def is_income(self):
+        return not self.is_expense()
+
+
 
 
