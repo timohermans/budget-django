@@ -1,5 +1,7 @@
+from typing import ClassVar
+
 from django.contrib.auth import get_user_model
-from django.db import models, transaction
+from django.db import models
 
 from .managers import TransactionManager
 
@@ -7,12 +9,14 @@ User = get_user_model()
 
 
 class Transaction(models.Model):
-    objects = TransactionManager()
+    objects: ClassVar[TransactionManager] = TransactionManager() # pyright: ignore[reportIncompatibleVariableOverride]
 
     follow_number = models.IntegerField(null=False, blank=False)
     iban = models.CharField(null=False, blank=False)
-    currency = models.CharField(null=True, blank=True, default='EUR')
-    amount = models.DecimalField(null=False, blank=False, max_digits=10, decimal_places=2)
+    currency = models.CharField(null=True, blank=True, default="EUR")
+    amount = models.DecimalField(
+        null=False, blank=False, max_digits=10, decimal_places=2
+    )
     date = models.DateField(null=False, blank=False)
     name_other_party = models.CharField(null=False, blank=False)
     iban_other_party = models.CharField(null=False, blank=False)
@@ -24,16 +28,21 @@ class Transaction(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['iban', 'follow_number', 'user'], name="unique_transaction"
+                fields=["iban", "follow_number", "user"], name="unique_transaction"
             )
         ]
 
-    def is_fixed(self) -> bool: # TODO: unit test
-        if self.is_not_fixed: return False
-        if 'paypal' in self.name_other_party.lower(): return False
-        if self.code in ('sb', 'cb', 'bg', 'ei', 'tb'): return True
-        if self.code == 'db' and 'sparen' in self.description.lower(): return True
-        if self.code == 'db' and 'Rabobank' == self.name_other_party: return True
+    def is_fixed(self) -> bool:  # TODO: unit test
+        if self.is_not_fixed:
+            return False
+        if "paypal" in self.name_other_party.lower():
+            return False
+        if self.code in ("sb", "cb", "bg", "ei", "tb"):
+            return True
+        if self.code == "db" and "sparen" in self.description.lower():
+            return True
+        if self.code == "db" and "Rabobank" == self.name_other_party:
+            return True
         return False
 
     def is_variable(self):
@@ -44,7 +53,3 @@ class Transaction(models.Model):
 
     def is_income(self):
         return not self.is_expense()
-
-
-
-

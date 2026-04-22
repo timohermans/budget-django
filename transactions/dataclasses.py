@@ -1,6 +1,8 @@
 from dataclasses import field, dataclass
+from typing import TYPE_CHECKING
 
-from transactions.models import Transaction
+if TYPE_CHECKING:
+    from transactions.models import Transaction
 
 
 @dataclass
@@ -9,14 +11,14 @@ class WeekSummary:
     budget: float
     spent: float
     left: float
-    transactions: list[Transaction] = field(default_factory=list)
+    transactions: list["Transaction"] = field(default_factory=list)
 
 
 @dataclass
 class BalanceSummary:
     iban: str
     balance: float
-    transactions: list[Transaction] = field(default_factory=list)
+    transactions: list["Transaction"] = field(default_factory=list)
 
 
 @dataclass
@@ -27,6 +29,8 @@ class Summary:
     left: float
     budget: float
     weeks: dict[int, WeekSummary] = field(default_factory=dict)
-    income_transactions: list[Transaction] = field(default_factory=list)
-    expense_transactions: list[Transaction] = field(default_factory=list)
+    income_transactions: list["Transaction"] = field(default_factory=list)
+    expense_transactions: list["Transaction"] = field(default_factory=list)
+    income_transactions: list["Transaction"] = field(default_factory=list)
+    expense_transactions: list["Transaction"] = field(default_factory=list)
     iban_balances: dict[str, BalanceSummary] = field(default_factory=dict)

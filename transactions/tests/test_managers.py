@@ -73,3 +73,177 @@ class TransactionManagerTestCase(TestCase):
         Transaction.objects.process_file(file_2, user)
 
         self.assertEqual(1, len(Transaction.objects.all()))
+
+    def test_get_summary_for__succeeds(self):
+        user = User.objects.get(username='test')
+
+        Transaction.objects.bulk_create([
+            Transaction(
+                follow_number=1,
+                amount=3000.3,
+                date=datetime.date(2025, 12, 12),
+                iban='OWNED01',
+                iban_other_party='WORK01',
+                name_other_party='Werkgever A',
+                code='sb',
+                description='Salaris werkgever A',
+                user=user,
+            ),
+            Transaction(
+                follow_number=2,
+                amount=2000.3,
+                date=datetime.date(2025, 12, 12),
+                iban='OWNED01',
+                iban_other_party='WORK02',
+                name_other_party='Werkgever B',
+                code='sb',
+                description='Salaris werkgever B',
+                user=user,
+            ),
+            Transaction(
+                follow_number=3,
+                amount=-44,
+                date=datetime.date(2025, 12, 8),
+                iban='OWNED01',
+                iban_other_party='HOBBY01',
+                name_other_party='Piano lerares',
+                code='bg',
+                description='Lessen Timo',
+                user=user,
+            ),
+            Transaction(
+                follow_number=4,
+                amount=-51.03,
+                date=datetime.date(2025, 12, 6),
+                iban='OWNED01',
+                iban_other_party='CORPO01',
+                name_other_party='ODIDO Netherlands',
+                code='ei',
+                description='Mob 0611111111 Klantnr. 1.1231241',
+                user=user,
+            ),
+            Transaction(
+                follow_number=5,
+                amount=-109,
+                date=datetime.date(2025, 12, 6),
+                iban='OWNED01',
+                iban_other_party='CORPO02',
+                name_other_party='ESSENT RETAIL ENERGIE B.V.',
+                code='cb',
+                description='150046212311/KLANT 1235467 KNMRK',
+                user=user,
+            ),
+            Transaction(
+                follow_number=6,
+                amount=-5.45,
+                date=datetime.date(2025, 12, 2),
+                iban='OWNED01',
+                iban_other_party='CORPO03',
+                name_other_party='Rabobank',
+                code='db',
+                description='Kosten basispakket',
+                user=user,
+            ),
+            Transaction(
+                follow_number=7,
+                amount=-1801.81,
+                date=datetime.date(2025, 12, 28),
+                iban='OWNED01',
+                iban_other_party='CORPO04',
+                name_other_party='BLG Wonen',
+                code='ei',
+                description='Hypotheek termijnbetaling.',
+                user=user,
+            ),
+            # variabele uitgaven
+            # week 1
+            Transaction(
+                follow_number=8,
+                amount=-20.72,
+                date=datetime.date(2026, 1, 2),
+                iban='OWNED01',
+                iban_other_party='SHOP01',
+                name_other_party='AH - Jan Linders 4141',
+                code='bc',
+                description='Terminal: Boodschappen 1',
+                user=user,
+            ),
+            Transaction(
+                follow_number=9,
+                amount=-300,
+                date=datetime.date(2026, 1, 2),
+                iban='OWNED01',
+                iban_other_party='SHOP01',
+                name_other_party='AH - Jan Linders 4141',
+                code='bc',
+                description='Terminal: Boodschappen 1',
+                user=user,
+            ),
+            Transaction(
+                follow_number=10,
+                amount=-800,
+                date=datetime.date(2026, 1, 11),
+                iban='OWNED01',
+                iban_other_party='SHOP01',
+                name_other_party='AH - Jan Linders 4141',
+                code='bc',
+                description='Terminal: Boodschappen 2',
+                user=user,
+            ),
+            Transaction(
+                follow_number=11,
+                amount=-1000,
+                date=datetime.date(2026, 1, 11),
+                iban='OWNED01',
+                iban_other_party='OWNED02',
+                name_other_party='Spaar',
+                code='tb',
+                description='Maandelijks sparen',
+                user=user,
+            ),
+            Transaction(
+                follow_number=12,
+                amount=1000,
+                date=datetime.date(2026, 1, 11),
+                iban='OWNED02',
+                iban_other_party='OWNED01',
+                name_other_party='Betaalrekening',
+                code='bc',
+                description='Maandelijks sparen',
+                user=user,
+            ),
+            Transaction(
+                follow_number=13,
+                amount=500,
+                date=datetime.date(2026, 1, 11),
+                iban='OWNED01',
+                iban_other_party='OWNED02',
+                name_other_party='Spaar',
+                code='tb',
+                description='Buffer geld',
+                user=user,
+            ),
+            Transaction(
+                follow_number=14,
+                amount=-500,
+                date=datetime.date(2026, 1, 11),
+                iban='OWNED02',
+                iban_other_party='OWNED01',
+                name_other_party='Betaalrekening',
+                code='bc',
+                description='Buffer sparen',
+                user=user,
+            ),
+        ])
+
+        # act
+        summary = Transaction.objects.get_summary_for(2026, 1, None, user)
+
+        # arrange
+        self.assertIsNotNone(summary)
+        self.assertEqual(Decimal('5000.6'), summary.income)
+        self.assertEqual(Decimal('2011.29'), summary.expenses)
+        self.assertEqual(Decimal('1120.72'), summary.spent)
+        self.assertEqual(Decimal('2989.31'), summary.budget)
+        self.assertEqual(Decimal('1868.59'), summary.left)
+
