@@ -53,3 +53,6 @@ class Transaction(models.Model):
 
     def is_income(self):
         return not self.is_expense()
+
+    def __str__(self) -> str:
+        return f"{self.amount} -> {self.iban} <- {self.iban_other_party} ({self.name_other_party})"

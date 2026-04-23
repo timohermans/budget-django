@@ -1,18 +1,18 @@
 from typing import cast
 
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views import View
 
 from .models import Transaction
+from user.type import User
 
 
 class TransactionUploadView(View):
     @staticmethod
     def post(request: HttpRequest) -> HttpResponse:
-        user = cast(AbstractBaseUser, request.user)
+        user = cast(User, request.user)
 
         if 'file' not in request.FILES:
             return render(request, 'transactions/upload/error.html', {'message': 'Geen bestand toegevoegd.'})

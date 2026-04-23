@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,29 +8,62 @@
     <title>Budget {% block title%}{% endblock title %}</title>
 
     <!-- Favicon -->
-    {% comment %} <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" href="/favicon.png" /> {% endcomment %}
+    {% comment %}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    {% endcomment %}
 
     <!-- CSS -->
-    {% comment %} <link rel="stylesheet" href="styles.css" /> {% endcomment %}
+    {% comment %}
+    <link rel="stylesheet" href="styles.css" />
+    {% endcomment %}
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css"
+    />
+    <style>
+      :root {
+        --pico-font-size: 1rem;
+      }
+    </style>
     {% block styles %}{% endblock styles %}
+
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"
+    ></script>
+    <script defer type="module">
+      import {
+        createIcons,
+        ArrowLeft,
+        ArrowRight,
+      } from "https://cdn.jsdelivr.net/npm/lucide@1.9.0/+esm";
+      createIcons({
+        icons: {
+          ArrowLeft,
+          ArrowRight,
+        },
+      });
+    </script>
+    {% block scripts %}{% endblock scripts %}
   </head>
   <body>
-
     <header>
       <nav><!-- navigation --></nav>
     </header>
 
-    <main>
-        {% block content %}<p>Main content</p>{% endblock content %}
+    <main class="container">
+      {% block content %}
+      <p>Main content</p>
+      {% endblock content %}
     </main>
 
     <footer>
       <!-- footer content -->
     </footer>
-
-    <!-- Scripts (deferred) -->
-    {% comment %} <script src="app.js" defer></script> {% endcomment %}
-    {% block scripts %}{% endblock scripts %}
   </body>
 </html>

@@ -1,5 +1,13 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<section class="grid">
+  <h1>Overzicht</h1>
+  <button class="secondary">Bestand uploaden</button>
+  <div>
+    <button class="outline secondary"><i data-lucide="arrow-left" width="16" height="16"></i></button>
+    <button class="outline secondary">Vandaag</button>
+    <button class="outline secondary"><i data-lucide="arrow-right" width="16" height="16"></i></button>
+  </div>
+</section>
 
-{% block content %}
-<h1>Hi mom!</h1>
+<section hx-trigger="load" hx-get="/budget/overview/{{ year }}/{{ month }}"></section>
 {% endblock content %}
