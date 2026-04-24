@@ -8,21 +8,59 @@
         }
 
         > *:not(:first-child)  {
-            padding-left: calc(var(--pico-block-spacing-horizontal) * 2);
+            padding-left: calc(var(--pico-spacing) * 2);
         }
 
         > *:not(:last-child) {
-            padding-right: calc(var(--pico-block-spacing-horizontal) * 2);
+            padding-right: calc(var(--pico-spacing) * 2);
             border-right: 1px dashed black;
         }
 
         h2 {
-            margin: calc(var(--pico-block-spacing-horizontal) / 4) 0;
+            margin: calc(var(--pico-spacing) / 4) 0;
         }
 
         small {
             color: var(--pico-muted-color);
         }
+    }
+
+    .week {
+      max-width: 800px;
+      margin: 0 auto;
+
+      section, h5 {
+        margin: 0;
+      }
+
+      small {
+          color: var(--pico-muted-color);
+      }
+
+      details:not([open]) {
+        margin-bottom: 0;
+      }
+
+      summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      progress {
+        margin:  0;
+      }
+
+      summary > * {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: calc(var(--pico-spacing) / 2);
+
+        &:not(:first-child) {
+          flex-basis: 150px;
+        }
+      }
     }
 </style>
 
@@ -45,3 +83,30 @@
     </div>
   </article>
 </div>
+
+<section class="week">
+  <h4><i>Budget per week</i></h4>
+    {% for week, week_summary in summary.weeks.items %}
+    <article>
+    <details name="week">
+      <summary>
+        <section>
+          <small>Week</small>
+          <h5>{{ week }}</h5>
+        </section>
+        <section>
+          <small>Over</small>
+          {{ week_summary.left }}
+        </section>
+        <section>
+          <small>Uitgegeven</small>
+          <progress value="64" max="100" />
+        </section>
+      </summary>
+      <div>
+        <h5>hi mom</h5>
+      </div>
+    </details>
+  </article>
+    {% endfor%}
+</section
