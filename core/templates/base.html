@@ -25,7 +25,64 @@
       :root {
         --pico-font-size: 1rem;
       }
+
+      .spinning {
+        animation: spin 0.9s infinite;
+      }
+
+      @-ms-keyframes spin {
+        from {
+          -ms-transform: rotate(0deg);
+        }
+        to {
+          -ms-transform: rotate(360deg);
+        }
+      }
+      @-moz-keyframes spin {
+        from {
+          -moz-transform: rotate(0deg);
+        }
+        to {
+          -moz-transform: rotate(360deg);
+        }
+      }
+      @-webkit-keyframes spin {
+        from {
+          -webkit-transform: rotate(0deg);
+        }
+        to {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .htmx-indicator {
+        opacity: 0;
+        display: none;
+      }
+      .htmx-request .htmx-indicator,
+      .htmx-request.htmx-indicator {
+        opacity: 1;
+        display: block;
+        transition: opacity 200ms ease-in;
+      }
+
+      .htmx-request.htmx-indicator + .htmx-not-indicator,
+      .htmx-request .htmx-indicator + .htmx-not-indicator {
+        display: none;
+      }
     </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap-grid.min.css"
+    />
     {% block styles %}{% endblock styles %}
 
     <script
@@ -41,17 +98,31 @@
         createIcons,
         ArrowLeft,
         ArrowRight,
+        FileUp,
+        Loader,
       } from "https://cdn.jsdelivr.net/npm/lucide@1.9.0/+esm";
-      createIcons({
-        icons: {
-          ArrowLeft,
-          ArrowRight,
-        },
+
+      function loadIcons() {
+        createIcons({
+          icons: {
+            ArrowLeft,
+            ArrowRight,
+            FileUp,
+            Loader,
+          },
+        });
+      }
+
+      htmx.config.globalViewTransitions = true;
+      htmx.onLoad(function (elt) {
+        loadIcons();
       });
+
+      loadIcons();
     </script>
     {% block scripts %}{% endblock scripts %}
   </head>
-  <body>
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <header>
       <nav><!-- navigation --></nav>
     </header>

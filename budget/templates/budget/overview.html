@@ -1,1 +1,47 @@
-<h2>Hi mom!</h2>
+<style>
+    #stats {
+        display: flex;
+
+        > * {
+            display: flex;
+            flex-direction: column;
+        }
+
+        > *:not(:first-child)  {
+            padding-left: calc(var(--pico-block-spacing-horizontal) * 2);
+        }
+
+        > *:not(:last-child) {
+            padding-right: calc(var(--pico-block-spacing-horizontal) * 2);
+            border-right: 1px dashed black;
+        }
+
+        h2 {
+            margin: calc(var(--pico-block-spacing-horizontal) / 4) 0;
+        }
+
+        small {
+            color: var(--pico-muted-color);
+        }
+    }
+</style>
+
+<div class="d-flex justify-content-center">
+  <article id="stats">
+    <div>
+      <small>Deze maand</small>
+      <h2>{{ month_display }}</h2>
+      <small>{{ month_start }} - {{ month_end }}</small>
+    </div>
+    <div>
+      <small>Budget</small>
+      <h2>{{ summary.budget }}</h2>
+      <small>{{ summary.income }} - {{ summary.expenses }}</small>
+    </div>
+    <div>
+      <small>Uitgegeven</small>
+      <h2>{{ summary.spent }}</h2>
+      <small>{{ summary.left}} over</small>
+    </div>
+  </article>
+</div>

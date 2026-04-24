@@ -5,7 +5,6 @@ from io import TextIOWrapper
 from typing import TypeVar, Optional, TYPE_CHECKING
 
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import UploadedFile
 from django.db import models
@@ -15,6 +14,7 @@ from core.exceptions import DomainError
 from transactions.dataclasses import Summary, WeekSummary, BalanceSummary
 
 User = get_user_model()
+
 Model = TypeVar("Model", bound=models.Model)
 
 if TYPE_CHECKING:
@@ -25,15 +25,19 @@ class TransactionManager(models.Manager["Transaction"]):
     def get_queryset(self) -> models.QuerySet["Transaction", "Transaction"]:
         return super().get_queryset()
 
-    def process_file(self, uploaded_file: UploadedFile, user: User) -> int:
+    def process_file(self, uploaded_file: UploadedFile, user: User) -> datetime.date:
         if uploaded_file.file is None:
             raise ValueError("Uploaded file is not available")
-        csv_file = TextIOWrapper(uploaded_file.file, "utf-8")
+        csv_file = TextIOWrapper(uploaded_file.file, "latin-1")
         reader = csv.DictReader(csv_file)
         transactions = []
+        date_max: datetime.date = datetime.date(datetime.MINYEAR, 1, 1)
         for row in reader:
+            date = datetime.date.fromisoformat(row["Datum"])
+            if date > date_max:
+                date_max = date
             transaction = self.model(
-                date=datetime.date.fromisoformat(row["Datum"]),
+                date=date,
                 user=user,
                 amount=float(row["Bedrag"].replace(",", ".")),
                 currency=row["Munt"],
@@ -52,7 +56,7 @@ class TransactionManager(models.Manager["Transaction"]):
             transactions.append(transaction)
 
         self.bulk_create(transactions, ignore_conflicts=True)
-        return len(transactions)
+        return date_max
 
     def get_summary_for(
         self, year: int, month: int, iban: Optional[str], user: User
