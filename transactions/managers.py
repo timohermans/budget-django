@@ -1,6 +1,7 @@
 from collections import defaultdict
 import csv
 import datetime
+from decimal import Decimal
 from io import TextIOWrapper
 from typing import TypeVar, Optional, TYPE_CHECKING
 
@@ -39,7 +40,7 @@ class TransactionManager(models.Manager["Transaction"]):
             transaction = self.model(
                 date=date,
                 user=user,
-                amount=float(row["Bedrag"].replace(",", ".")),
+                amount=Decimal(row["Bedrag"].replace(",", ".")),
                 currency=row["Munt"],
                 description=(
                     row["Omschrijving-1"]
@@ -147,7 +148,7 @@ class TransactionManager(models.Manager["Transaction"]):
             budget_of_week = (summary.budget / this_month_end.day) * len(
                 dates_per_week[week]
             )
-            week_summary.budget = budget_of_week
+            week_summary.budget = Decimal(budget_of_week)
             week_summary.left = abs(week_summary.budget) - abs(week_summary.spent)
 
         return summary
