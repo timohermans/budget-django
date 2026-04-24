@@ -72,3 +72,8 @@ Also, I want to use as much Python as possible.
 Some customization is still required, but PicoCSS really has nice css variables that you can tweak.
 - **Alternatives Considered:** [BeerCSS](https://github.com/beercss/beercss)
 - **Impact:** Should make developing a breeze.
+
+- **Decision:** Use [Lucide](https://www.lucide.dev) for icons.
+- **Rationale:** Works very nicely with CDN and inplace rendering of icons.
+- **Alternatives Considered:** Bootstrap Icons. Didn't use it this time because of been-there-done-that mentality.
+- **Impact:** Should make developing a breeze.
