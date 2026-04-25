@@ -1,6 +1,9 @@
-<form hx-boost="true"
+<form 
+      id="toggle-{{transaction.id}}"
+      hx-boost="true"
       method="post"
       action="{% url "transactions:toggle-fixed" %}">
+    {% csrf_token %}
 
     <input type="hidden" name="id" value="{{ transaction.id }}" />
 

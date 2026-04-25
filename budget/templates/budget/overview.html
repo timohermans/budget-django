@@ -1,5 +1,5 @@
 <style>
-    #stats {
+    .stats {
         display: flex;
 
         > * {
@@ -25,7 +25,7 @@
         }
     }
 
-    .week {
+    .weeks {
       max-width: 800px;
       margin: 0 auto;
 
@@ -36,50 +36,43 @@
       small {
           color: var(--pico-muted-color);
       }
+    }
 
-      details:not([open]) {
-        margin-bottom: 0;
+    .summary {
+      align-items: center;
+      background: var(--pico-card-background-color);
+      display: flex;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+    }
+
+    .summary > * {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: calc(var(--pico-spacing) / 2);
+
+      &:not(:first-child) {
+        flex-basis: 150px;
       }
+    }
 
-      summary {
-        align-items: center;
-        background: var(--pico-card-background-color);
-        display: flex;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-      }
+    .summary > * > div {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--pico-spacing) / 4);
+    }
 
-      progress {
-        margin:  0;
-        min-width: 100px;
-      }
-
-      summary > * {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: calc(var(--pico-spacing) / 2);
-
-        &:not(:first-child) {
-          flex-basis: 150px;
-        }
-      }
-
-      summary > * > div {
-        display: flex;
-        align-items: center;
-        gap: calc(var(--pico-spacing) / 4);
-      }
+    progress {
+      margin:  0;
+      min-width: 100px;
     }
 
     .transaction {
       display: flex;
       gap: var(--pico-spacing);
-
-      &:not(:first-child) {
-        margin-top: var(--pico-spacing);
-      }
+      margin-top: var(--pico-spacing);
 
       > * {
         display: flex;
@@ -115,7 +108,7 @@
 </style>
 
 <div class="d-flex justify-content-center">
-  <article id="stats">
+  <article class="stats">
     <div>
       <small>Deze maand</small>
       <h2>{{ month_display }}</h2>
@@ -134,12 +127,25 @@
   </article>
 </div>
 
-<section class="week">
+<section class="weeks">
   <h4><i>Budget per week</i></h4>
     {% for week_number, week_summary in summary.weeks.items %}
-    <article>
-    <details name="week" {% if week == week_number %}open{% endif %}>
-      <summary>
+    <article x-data="{ isOpen: {% if week == week_number %}true{% else %}false{% endif %}}">
+    <div 
+      id="week-{{ week_number }}"
+      class="details"
+      >
+      <div class="summary"
+        {% if week_number == week %}
+        hx-get="{% url 'budget:home' date.year date.month %}"
+        hx-swap="show:top"
+        {% else %}
+        hx-get="{% url 'budget:home' date.year date.month week_number %}"
+        hx-swap="show:#week-{{ week_number }}:top"
+        {% endif %}
+        hx-target="body"
+        hx-push-url="true"
+      >
         <section>
           <small>Week</small>
           <h5>{{ week_number }}</h5>
@@ -156,9 +162,10 @@
             <small>{{ week_summary.budget|floatformat:2 }}</small>
           </div>
         </section>
-      </summary>
+      </div>
+      <div class="{% if week != week_number %}hidden{% endif %}">
       {% for transaction in week_summary.transactions %}
-      <div class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
+      <div id="transaction-{{transaction.id}}" class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
         <div>
           <b>{{ transaction.date|date:'d-m' }}</b>
           <div>
@@ -174,7 +181,8 @@
         </div>
       </div>
       {% endfor %}
-    </details>
+      </div>
+    </div>
   </article>
     {% endfor%}
-</section
+</section>

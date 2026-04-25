@@ -28,13 +28,11 @@
         --error: #EE402E;
       }
 
-      .smaller {
-        padding: calc(var(--pico-spacing) / 4) calc(var(--pico-spacing) / 2);
-      }
-
-      .spinning {
-        animation: spin 0.9s infinite;
-      }
+      body { height: 100vh }
+      main { height: 100%; }
+      .hidden { display: none; }
+      .smaller { padding: calc(var(--pico-spacing) / 4) calc(var(--pico-spacing) / 2); }
+      .spinning { animation: spin 0.9s infinite; }
 
       @-ms-keyframes spin {
         from {

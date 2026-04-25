@@ -19,9 +19,9 @@ def toggle_fixed(request):
     transaction.toggle_fixed()
     return redirect(
         reverse(
-            "budget:index",
-            kwargs={"year": transaction.date.year, "month": transaction.date.month},
-        ) + f"?{urlencode({ "week": transaction.date.isocalendar().week })}"
+            "budget:home",
+            kwargs={"year": transaction.date.year, "month": transaction.date.month, "week": transaction.date.isocalendar().week},
+        )
     )
 
 

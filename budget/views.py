@@ -16,37 +16,21 @@ class IndexView(TemplateView):
         if "year" not in context:
             context["year"] = datetime.date.today().year
             context["month"] = datetime.date.today().month
-        context["week"] = self.request.GET["week"] if "week" in self.request.GET else 0
 
         date = datetime.date(context["year"], context["month"], 1)
+        context["date"] = date
         context["date_previous"] = date + relativedelta(months=-1)
         context["date_next"] = date + relativedelta(months=1)
 
-
-        return context
-
-
-class OverviewView(TemplateView):
-    template_name = "budget/overview.html"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-
-        # date stuff
-        year = context["year"]
-        month = context["month"]
-        date = datetime.date(year, month, 1)
-
         context["month_display"] = date.strftime("%B")
         context["month_start"] = date.strftime("%d %b")
-        context["month_end"] = (date + relativedelta(months=1, days=-1)).strftime("%d %b")
+        context["month_end"] = (date + relativedelta(months=1, days=-1)).strftime("%d %b") 
 
         user = cast(User, self.request.user)
         context["summary"] = Transaction.objects.get_summary_for(
-            year, month, iban=None, user=user
+            date.year, date.month, iban=None, user=user
         )
-
         if "week" not in context:
-            context["week"] = 0 # TODO: improvement, use max week to always open?
+            context["week"] = 0
 
         return context

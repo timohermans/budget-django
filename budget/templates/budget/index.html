@@ -33,17 +33,15 @@
   </div>
 
   <div hx-boost="true">
-    <a class="outline secondary" role="button" href="{% url "budget:index" date_previous.year date_previous.month %}"><i data-lucide="arrow-left" width="16" height="16"></i></a>
+    <a class="outline secondary" role="button" href="{% url "budget:home" date_previous.year date_previous.month %}"><i data-lucide="arrow-left" width="16" height="16"></i></a>
     <a role="button" class="outline secondary" href="{% url "budget:home" %}">vandaag</a>
-    <a class="outline secondary" role="button" href="{% url "budget:index" date_next.year date_next.month %}">
+    <a class="outline secondary" role="button" href="{% url "budget:home" date_next.year date_next.month %}">
       <i data-lucide="arrow-right" width="16" height="16"></i>
     </a>
   </div>
 </section>
 
-<section
-  id="overview"
-  hx-trigger="load"
-  hx-get="{% url "budget:overview" year month week %}"
-></section>
+<section id="overview">
+  {% include "budget/overview.html" with summary=summary week=week%}
+</section>
 {% endblock content %}
