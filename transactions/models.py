@@ -39,7 +39,7 @@ class Transaction(models.Model):
             return False
         if self.code in ("sb", "cb", "bg", "ei", "tb"):
             return True
-        if self.code == "db" and "sparen" in self.description.lower():
+        if self.code == "db" and self.description is not None and "sparen" in self.description.lower():
             return True
         if self.code == "db" and "Rabobank" == self.name_other_party:
             return True
