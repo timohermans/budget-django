@@ -2,12 +2,27 @@ from typing import cast
 
 from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.http import urlencode
 from django.views import View
+from django.views.decorators.http import require_POST
 
 from .models import Transaction
 from user.type import User
+
+
+@require_POST
+def toggle_fixed(request):
+    id = int(request.POST["id"])
+    transaction = get_object_or_404(Transaction, id=id, user=request.user)
+    transaction.toggle_fixed()
+    return redirect(
+        reverse(
+            "budget:index",
+            kwargs={"year": transaction.date.year, "month": transaction.date.month},
+        ) + f"?{urlencode({ "week": transaction.date.isocalendar().week })}"
+    )
 
 
 class TransactionUploadView(View):

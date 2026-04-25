@@ -49,6 +49,7 @@
 
       progress {
         margin:  0;
+        min-width: 100px;
       }
 
       summary > * {
@@ -60,6 +61,52 @@
         &:not(:first-child) {
           flex-basis: 150px;
         }
+      }
+
+      summary > * > div {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--pico-spacing) / 4);
+      }
+    }
+
+    .transaction {
+      display: flex;
+      gap: var(--pico-spacing);
+
+      &:not(:first-child) {
+        margin-top: var(--pico-spacing);
+      }
+
+      > * {
+        display: flex;
+        flex-direction: column;
+
+        &:first-child {
+          justify-content: space-between;
+        }
+      }
+
+      .amount {
+        border: 1px solid black;
+        border-radius: var(--pico-border-radius);
+        padding: calc(var(--pico-spacing) / 5) calc(var(--pico-spacing) / 2);
+      }
+
+      &.positive {
+        .amount { color: var(--success); border-color: var(--success); }
+      }
+
+      &.negative {
+        .amount { color: var(--error); border-color: var(--error); } 
+      }
+
+      
+      button:not(.is-not-fixed):hover,
+      .is-not-fixed {
+        text-decoration: line-through;
+        border-color: #25DDDD;
+        color: #25DDDD;
       }
     }
 </style>
@@ -86,26 +133,44 @@
 
 <section class="week">
   <h4><i>Budget per week</i></h4>
-    {% for week, week_summary in summary.weeks.items %}
+    {% for week_number, week_summary in summary.weeks.items %}
     <article>
-    <details name="week">
+    <details name="week" {% if week == week_number %}open{% endif %}>
       <summary>
         <section>
           <small>Week</small>
-          <h5>{{ week }}</h5>
+          <h5>{{ week_number }}</h5>
         </section>
         <section>
           <small>Over</small>
-          {{ week_summary.left }}
+          <b>{{ week_summary.left|floatformat:2 }}</b>
         </section>
         <section>
           <small>Uitgegeven</small>
-          <progress value="64" max="100" />
+          <div>
+            <small>{{ week_summary.spent|floatformat:2 }}</small>
+            <progress class="{% if week_summary.spent > week_summary.budget %}negative{% endif %}" value="{{ week_summary.spent }}" max="{{ week_summary.budget }}"></progress>
+            <small>{{ week_summary.budget|floatformat:2 }}</small>
+          </div>
         </section>
       </summary>
-      <div>
-        <h5>hi mom</h5>
+      {% for transaction in week_summary.transactions %}
+      <div class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
+        <div>
+          <b>{{ transaction.date|date:'d-m' }}</b>
+          <div>
+            {% if transaction.is_fixed or transaction.is_not_fixed %}
+            {% include 'transactions/includes/toggle-fixed.html' with transaction=transaction %}
+            {% endif %}
+          </div>
+        </div>
+        <div>
+          <div><span class="amount">{{ transaction.amount|floatformat:2 }}</span></div>
+          <i>{{ transaction.name_other_party }}</i>
+          <small>{{ transaction.description }}</small>
+        </div>
       </div>
+      {% endfor %}
     </details>
   </article>
     {% endfor%}

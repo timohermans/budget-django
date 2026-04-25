@@ -1,0 +1,12 @@
+<form hx-boost="true"
+      method="post"
+      action="{% url "transactions:toggle-fixed" %}">
+
+    <input type="hidden" name="id" value="{{ transaction.id }}" />
+
+    <button 
+        type="submit"
+        class="outline smaller {% if transaction.is_not_fixed %}is-not-fixed{% endif %}">
+        vast
+    </button>
+</form>

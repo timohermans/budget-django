@@ -54,5 +54,9 @@ class Transaction(models.Model):
     def is_income(self):
         return not self.is_expense()
 
+    def toggle_fixed(self):
+        self.is_not_fixed = not self.is_not_fixed
+        self.save()
+
     def __str__(self) -> str:
         return f"{self.amount} -> {self.iban} <- {self.iban_other_party} ({self.name_other_party})"
