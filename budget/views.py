@@ -27,6 +27,8 @@ class IndexView(TemplateView):
         context["month_end"] = (date + relativedelta(months=1, days=-1)).strftime("%d %b") 
 
         user = cast(User, self.request.user)
+
+        # TODO: Figure out how caching would work, as this endpoints get hit pretty often
         context["summary"] = Transaction.objects.get_summary_for(
             date.year, date.month, iban=None, user=user
         )
