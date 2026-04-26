@@ -25,7 +25,7 @@
         }
     }
 
-    .weeks {
+    .collapsible-list {
       max-width: 800px;
       margin: 0 auto;
 
@@ -127,10 +127,10 @@
   </article>
 </div>
 
-<section class="weeks">
+<section class="collapsible-list">
   <h4><i>Budget per week</i></h4>
     {% for week_number, week_summary in summary.weeks.items %}
-    <article x-data="{ isOpen: {% if week == week_number %}true{% else %}false{% endif %}}">
+    <article>
     <div 
       id="week-{{ week_number }}"
       class="details"
@@ -163,7 +163,8 @@
           </div>
         </section>
       </div>
-      <div class="{% if week != week_number %}hidden{% endif %}">
+      {% if week == week_number %}
+      <div>
       {% for transaction in week_summary.transactions %}
       <div id="transaction-{{transaction.id}}" class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
         <div>
@@ -182,6 +183,62 @@
       </div>
       {% endfor %}
       </div>
+      {% endif %}
+    </div>
+  </article>
+    {% endfor%}
+</section>
+
+<section class="collapsible-list">
+  <h4><i>Balans per rekening</i></h4>
+    {% for iban, iban_balance in summary.iban_balances.items %}
+    <article>
+    <div 
+      id="iban-{{ iban }}"
+      class="details"
+      >
+      <div class="summary"
+        {% if iban == iban_selected %}
+        hx-get="{% url 'budget:home' date.year date.month %}"
+        hx-swap="show:top"
+        {% else %}
+        hx-get="{% url 'budget:home' date.year date.month iban %}"
+        hx-swap="show:#iban-{{ iban }}:top"
+        {% endif %}
+        hx-target="body"
+        hx-push-url="true"
+      >
+        <section>
+          <small>Iban</small>
+          <h5>{{ iban }}</h5>
+        </section>
+        <section>
+          <small>Balans</small>
+          <b>{{ iban_balance.balance|floatformat:2 }}</b>
+        </section>
+        <section></section>
+      </div>
+      {% if iban == iban_selected %}
+      <div>
+      {% for transaction in iban_balance.transactions %}
+      <div id="transaction-{{transaction.id}}" class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
+        <div>
+          <b>{{ transaction.date|date:'d-m' }}</b>
+          <div>
+            {% if transaction.is_fixed or transaction.is_not_fixed %}
+            {% include 'transactions/includes/toggle-fixed.html' with transaction=transaction %}
+            {% endif %}
+          </div>
+        </div>
+        <div>
+          <div><span class="amount">{{ transaction.amount|floatformat:2 }}</span></div>
+          <i>{{ transaction.name_other_party }}</i>
+          <small>{{ transaction.description }}</small>
+        </div>
+      </div>
+      {% endfor %}
+      </div>
+      {% endif %}
     </div>
   </article>
     {% endfor%}
