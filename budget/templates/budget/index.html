@@ -3,13 +3,14 @@
   <h1>Overzicht</h1>
   <div x-data>
     <form
-      hx-post="{% url "transactions:upload" %}"
-      hx-target="#overview"
-      hx-trigger="submit"
-      hx-encoding="multipart/form-data"
+      action="{% url "transactions:upload" %}"
+      method="POST"
+      enctype="multipart/form-data"
+      hx-boost
       hx-indicator=".spinning"
       hx-on::after-request="this.reset()"
     >
+      {% csrf_token %}
       <input
         type="file"
         name="file"

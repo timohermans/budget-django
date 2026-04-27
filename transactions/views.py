@@ -44,7 +44,7 @@ class TransactionUploadView(View):
             # TODO: logging!
             return redirect(
                 reverse(
-                    "budget:overview", kwargs={"year": date.year, "month": date.month}
+                    "budget:home", kwargs={"year": date.year, "month": date.month}
                 )
             )
         except Exception as e:
