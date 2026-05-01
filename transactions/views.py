@@ -4,7 +4,6 @@ from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.http import urlencode
 from django.views import View
 from django.views.decorators.http import require_POST
 
@@ -17,10 +16,21 @@ def toggle_fixed(request):
     id = int(request.POST["id"])
     transaction = get_object_or_404(Transaction, id=id, user=request.user)
     transaction.toggle_fixed()
+
+    kwargs = {
+        "year": transaction.date.year,
+        "month": transaction.date.month,
+    }
+
+    if "week" in request.POST and int(request.POST["week"]) > 0:
+        kwargs = {**kwargs, **{"week": request.POST["week"]}}
+    elif "iban" in request.POST:
+        kwargs = {**kwargs, **{"iban": request.POST["iban"]}}
+
     return redirect(
         reverse(
             "budget:home",
-            kwargs={"year": transaction.date.year, "month": transaction.date.month, "week": transaction.date.isocalendar().week},
+            kwargs=kwargs,
         )
     )
 
@@ -43,9 +53,7 @@ class TransactionUploadView(View):
             date = Transaction.objects.process_file(cast(UploadedFile, file), user)
             # TODO: logging!
             return redirect(
-                reverse(
-                    "budget:home", kwargs={"year": date.year, "month": date.month}
-                )
+                reverse("budget:home", kwargs={"year": date.year, "month": date.month})
             )
         except Exception as e:
             # TODO: logging!
