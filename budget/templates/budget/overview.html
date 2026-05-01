@@ -2,19 +2,35 @@
     .stats {
         display: flex;
 
-        > * {
-            display: flex;
-            flex-direction: column;
+        @media screen and (max-width: 578px) {
+          flex-direction: column;
+
+          > *:not(:first-child)  {
+              padding-top: calc(var(--pico-spacing));
+          }
+
+          > *:not(:last-child) {
+              padding-bottom: calc(var(--pico-spacing));
+              border-bottom: 1px dashed black;
+          }
         }
 
-        > *:not(:first-child)  {
-            padding-left: calc(var(--pico-spacing) * 2);
+        @media screen and (min-width: 579px) {
+          > * {
+              display: flex;
+              flex-direction: column;
+          }
+
+          > *:not(:first-child)  {
+              padding-left: calc(var(--pico-spacing) * 2);
+          }
+
+          > *:not(:last-child) {
+              padding-right: calc(var(--pico-spacing) * 2);
+              border-right: 1px dashed black;
+          }
         }
 
-        > *:not(:last-child) {
-            padding-right: calc(var(--pico-spacing) * 2);
-            border-right: 1px dashed black;
-        }
 
         h2 {
             margin: calc(var(--pico-spacing) / 4) 0;
@@ -73,6 +89,10 @@
       display: flex;
       gap: var(--pico-spacing);
       margin-top: var(--pico-spacing);
+
+      .date {
+        text-wrap: nowrap;
+      }
 
       > * {
         display: flex;
@@ -168,7 +188,7 @@
       {% for transaction in week_summary.transactions %}
       <div id="transaction-{{transaction.id}}" class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
         <div>
-          <b>{{ transaction.date|date:'d-m' }}</b>
+          <b class="date">{{ transaction.date|date:'d-m' }}</b>
           <div>
             {% if transaction.is_fixed or transaction.is_not_fixed %}
             {% include 'transactions/includes/toggle-fixed.html' with transaction=transaction %}
@@ -216,14 +236,13 @@
           <small>Balans</small>
           <b>{{ iban_balance.balance|floatformat:2 }}</b>
         </section>
-        <section></section>
       </div>
       {% if iban == iban_selected %}
       <div>
       {% for transaction in iban_balance.transactions %}
       <div id="transaction-{{transaction.id}}" class="transaction {% if transaction.amount > 0 %}positive{% else %}negative{% endif %}">
         <div>
-          <b>{{ transaction.date|date:'d-m' }}</b>
+          <b class="date">{{ transaction.date|date:'d-m' }}</b>
           <div>
             {% if transaction.is_fixed or transaction.is_not_fixed %}
             {% include 'transactions/includes/toggle-fixed.html' with transaction=transaction %}

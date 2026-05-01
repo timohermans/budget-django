@@ -76,7 +76,7 @@ class TransactionManager(models.Manager["Transaction"]):
         ]
         transactions = self.filter(
             user=user, date__gte=last_month, date__lt=next_month
-        ).all()
+        ).order_by("-date", "-name_other_party").all()
 
         if len(ibans) == 0:
             return Summary(0, 0, 0, 0, 0)  # TODO: test no ibans yet

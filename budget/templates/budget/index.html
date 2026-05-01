@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %}
-<section class="grid">
-  <h1>Overzicht</h1>
-  <div x-data>
+<section class="row justify-content-center">
+  <h1 class="col-12 col-md-4">Overzicht</h1>
+  <div class="col-6 col-md-4" x-data>
     <form
       action="{% url "transactions:upload" %}"
       method="POST"
@@ -28,14 +28,14 @@
       >
         <i data-lucide="loader" class="spinning htmx-indicator"></i>
         <i class="htmx-not-indicator" data-lucide="file-up"></i>
-        <span>Bestand uploaden</span>
+        <span>Voeg toe</span>
       </button>
     </form>
   </div>
 
-  <div hx-boost="true">
+  <div class="col-6 col-md-4" hx-boost="true">
     <a class="outline secondary" role="button" href="{% url "budget:home" date_previous.year date_previous.month %}"><i data-lucide="arrow-left" width="16" height="16"></i></a>
-    <a role="button" class="outline secondary" href="{% url "budget:home" %}">vandaag</a>
+    <a role="button" class="outline secondary" href="{% url "budget:home" %}">nu</a>
     <a class="outline secondary" role="button" href="{% url "budget:home" date_next.year date_next.month %}">
       <i data-lucide="arrow-right" width="16" height="16"></i>
     </a>
