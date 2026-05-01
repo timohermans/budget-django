@@ -32,7 +32,12 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS")
+
+is_secure = env.bool("SECURE_SSL_REDIRECT", default=False)
+if is_secure:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 
 # Application definition
@@ -113,12 +118,26 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+database_host = env("DB_HOST")
+
+if database_host is None:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("DB_DATABASE"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": database_host,
+            "PORT": env("DB_PORT"),
+        }    
+    }
 
 
 # Password validation
