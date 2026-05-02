@@ -110,7 +110,7 @@ class TransactionManager(models.Manager["Transaction"]):
             if (
                 is_target_iban
                 and is_last_month
-                and transaction.is_fixed()
+                and transaction.is_fixed(ibans)
                 and transaction.is_income()
             ):
                 summary.income += amount
@@ -119,7 +119,7 @@ class TransactionManager(models.Manager["Transaction"]):
             if (
                 is_target_iban
                 and is_last_month
-                and transaction.is_fixed()
+                and transaction.is_fixed(ibans)
                 and transaction.is_expense()
             ):
                 summary.expenses += abs(amount)
@@ -127,7 +127,7 @@ class TransactionManager(models.Manager["Transaction"]):
 
             if is_target_iban and is_this_month:
                 week_summary = summary.weeks[week]
-                if transaction.is_variable():
+                if transaction.is_variable(ibans):
                     summary.spent += amount * -1
                     week_summary.spent += amount * -1
 
