@@ -12,7 +12,7 @@ from django.db import models
 from django.db.models.aggregates import Count
 
 from core.exceptions import DomainError
-from transactions.dataclasses import Summary, WeekSummary, BalanceSummary
+from transactions.dataclasses import Summary, TransactionTemplateModel, WeekSummary, BalanceSummary
 
 User = get_user_model()
 
@@ -97,7 +97,16 @@ class TransactionManager(models.Manager["Transaction"]):
                 summary_per_week[week] = WeekSummary(week, 0, 0, 0)
 
         summary = Summary(0, 0, 0, 0, 0, summary_per_week)
-        for transaction in transactions:
+        for t in transactions:
+            transaction = TransactionTemplateModel(
+                t.id, # type: ignore
+                t.amount,
+                t.date,
+                t.is_fixed(ibans),
+                t.is_not_fixed,
+                t.name_other_party,
+                t.description
+            )
             date = transaction.date
             is_last_month = (
                 date.year == last_month.year and date.month == last_month.month
@@ -105,13 +114,13 @@ class TransactionManager(models.Manager["Transaction"]):
             is_this_month = not is_last_month
             amount = transaction.amount
             week = date.isocalendar().week
-            is_target_iban = iban == transaction.iban
+            is_target_iban = iban == t.iban
 
             if (
                 is_target_iban
                 and is_last_month
-                and transaction.is_fixed(ibans)
-                and transaction.is_income()
+                and transaction.is_fixed
+                and t.is_income()
             ):
                 summary.income += amount
                 summary.income_transactions.append(transaction)
@@ -119,26 +128,26 @@ class TransactionManager(models.Manager["Transaction"]):
             if (
                 is_target_iban
                 and is_last_month
-                and transaction.is_fixed(ibans)
-                and transaction.is_expense()
+                and transaction.is_fixed
+                and t.is_expense()
             ):
                 summary.expenses += abs(amount)
                 summary.expense_transactions.append(transaction)
 
             if is_target_iban and is_this_month:
                 week_summary = summary.weeks[week]
-                if transaction.is_variable(ibans):
+                if t.is_variable(ibans):
                     summary.spent += amount * -1
                     week_summary.spent += amount * -1
 
                 week_summary.transactions.append(transaction)
 
             if is_this_month:
-                if transaction.iban not in summary.iban_balances:
-                    summary.iban_balances[transaction.iban] = BalanceSummary(
-                        transaction.iban, 0
+                if t.iban not in summary.iban_balances:
+                    summary.iban_balances[t.iban] = BalanceSummary(
+                        t.iban, 0
                     )
-                balance = summary.iban_balances[transaction.iban]
+                balance = summary.iban_balances[t.iban]
                 balance.balance += amount
                 balance.transactions.append(transaction)
 
