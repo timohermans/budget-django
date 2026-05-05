@@ -1,3 +1,4 @@
+import datetime
 from typing import cast
 
 from django.core.files.uploadedfile import UploadedFile
@@ -17,22 +18,26 @@ def toggle_fixed(request):
     transaction = get_object_or_404(Transaction, id=id, user=request.user)
     transaction.toggle_fixed()
 
+    date: datetime.date = transaction.date
+    year = transaction.date.year
+    month = transaction.date.month
+    week = date.isocalendar().week
+
+    summary = Transaction.objects.get_summary_for(year, month, None, request.user)
+
     kwargs = {
-        "year": transaction.date.year,
-        "month": transaction.date.month,
+        "year": year,
+        "month": month,
+        "week": week,
+        "spent": summary.spent,
+        "left": summary.left,
+        "week_left": summary.weeks[week].left,
+        "week_spent": summary.weeks[week].spent,
+        "week_budget": summary.weeks[week].budget,
+        "transaction": transaction,
     }
 
-    if "week" in request.POST and int(request.POST["week"]) > 0:
-        kwargs = {**kwargs, **{"week": request.POST["week"]}}
-    elif "iban" in request.POST:
-        kwargs = {**kwargs, **{"iban": request.POST["iban"]}}
-
-    return redirect(
-        reverse(
-            "budget:home",
-            kwargs=kwargs,
-        )
-    )
+    return render(request, "transactions/includes/toggle-fixed.html", kwargs)
 
 
 class TransactionUploadView(View):

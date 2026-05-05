@@ -1,9 +1,8 @@
 <form 
       id="toggle-{{transaction.id}}"
-      hx-boost="true"
-      hx-swap="show:none"
-      method="post"
-      action="{% url "transactions:toggle-fixed" %}">
+      hx-target="this"
+      hx-swap="outerHTML"
+      hx-post="{% url "transactions:toggle-fixed" %}">
     {% csrf_token %}
 
     <input type="hidden" name="id" value="{{ transaction.id }}" />
@@ -16,3 +15,11 @@
         vast
     </button>
 </form>
+
+{% if spent is not None %}
+<h2 id="spent-total" hx-swap-oob="true">{{ spent|floatformat:2 }}</h2>
+<small id="left-total" hx-swap-oob="true">{{ left|floatformat:2 }}</small>
+<small id="spent-week-{{ week }}" hx-swap-oob="true">{{ week_spent|floatformat:2 }}</small>
+<b id="left-week-{{ week }}" hx-swap-oob="true">{{ week_left|floatformat:2 }}</b>
+<progress id="progress-week-{{ week }}" class="{% if week_spent > week_budget %}negative{% endif %}" value="{{ week_spent }}" max="{{ week_budget }}" hx-swap-oob="true"></progress>
+{% endif %}

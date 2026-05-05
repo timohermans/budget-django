@@ -141,8 +141,8 @@
     </div>
     <div>
       <small>Uitgegeven</small>
-      <h2>{{ summary.spent }}</h2>
-      <small>{{ summary.left}} over</small>
+      <h2 id="spent-total">{{ summary.spent }}</h2>
+      <small id="left-total">{{ summary.left}} over</small>
     </div>
   </article>
 </div>
@@ -172,13 +172,13 @@
         </section>
         <section>
           <small>Over</small>
-          <b>{{ week_summary.left|floatformat:2 }}</b>
+          <b id="left-week-{{ week_number }}">{{ week_summary.left|floatformat:2 }}</b>
         </section>
         <section>
           <small>Uitgegeven</small>
           <div>
-            <small>{{ week_summary.spent|floatformat:2 }}</small>
-            <progress class="{% if week_summary.spent > week_summary.budget %}negative{% endif %}" value="{{ week_summary.spent }}" max="{{ week_summary.budget }}"></progress>
+            <small id="spent-week-{{ week_number }}">{{ week_summary.spent|floatformat:2 }}</small>
+            <progress id="progress-week-{{ week_number }}" class="{% if week_summary.spent > week_summary.budget %}negative{% endif %}" value="{{ week_summary.spent }}" max="{{ week_summary.budget }}"></progress>
             <small>{{ week_summary.budget|floatformat:2 }}</small>
           </div>
         </section>
